@@ -1,0 +1,17 @@
+{%macro genTable(table)%}
+<div class="table">
+{%for row in table%}
+<div class="row">
+    {%for col in row%}
+    <div style="flex:{{col.flex}}">
+        {%if 'href' in col%}
+        <iframe src="{{col.href}}"></iframe>
+        {%else%}
+        {{genTable(col.table)}}
+        {%endif%}
+    </div>
+    {%endfor%}
+</div>
+{%endfor%}
+</div>
+{%endmacro%}

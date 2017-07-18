@@ -1,6 +1,9 @@
 from flask import Flask, url_for, render_template, redirect
+import json
 
 app = Flask(__name__)
+with open('config.json') as fp:
+    config = json.loads(fp.read())
 
 @app.route('/')
 def index():
@@ -8,7 +11,9 @@ def index():
 
 @app.route('/monitor')
 def monitor():
-    return render_template('monitor.html')
+    with open('table.json') as fp:
+        table = json.loads(fp.read())
+    return render_template('monitor.html', table=table, title=config['title'])
 
 @app.route('/static/<path:path>')
 def loadStatic(path):
