@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/static/css/plot/{{graph}}.css">
+    </head>
+    <body>
+        <svg id="plot"></svg>
+        <script src="/static/js/plot.js"></script>
+        <script>
+            var g = new Graph("{{graph}}");
+        </script>
+        <script src="/static/js/plot/{{graph}}.js"></script>
+        <script>
+            g.init();
+            setInterval(() => { g.draw(); }, {{interval}});
+        </script>
+    </body>
+</html>

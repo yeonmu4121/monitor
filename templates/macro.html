@@ -4,6 +4,7 @@
 <div class="row">
     {%for col in row%}
     <div style="flex:{{col.flex}}">
+        <h2>{{col.name}}</h2>
         {%if 'href' in col%}
         <iframe src="{{col.href}}"></iframe>
         {%else%}

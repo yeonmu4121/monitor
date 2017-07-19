@@ -15,6 +15,11 @@ def monitor():
         table = json.loads(fp.read())
     return render_template('monitor.html', table=table, title=config['title'])
 
+@app.route('/plot/<graph>/interval/<int:interval>')
+def plot(graph, interval):
+    graph = graph.replace('-', '_')
+    return render_template('plot.html', graph=graph, interval=interval)
+
 @app.route('/static/<path:path>')
 def loadStatic(path):
     return url_for('static', path=path)
