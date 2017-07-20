@@ -1,0 +1,9 @@
+DROP DATABASE IF EXISTS idb;
+
+CREATE DATABASE idb;
+
+CREATE TABLE idb.data (
+    label VARCHAR(255) NOT NULL,
+    value FLOAT NOT NULL,
+    updated DATETIME(6) NOT NULL
+);

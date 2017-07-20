@@ -1,5 +1,6 @@
 from flask import Flask, url_for, render_template, redirect
 import json
+import pymysql
 
 app = Flask(__name__)
 with open('config.json') as fp:
@@ -19,6 +20,40 @@ def monitor():
 def plot(graph, period):
     graph = graph.replace('-', '_')
     return render_template('plot.html', graph=graph, period=period)
+
+@app.route('/get/<label>/interval/<int:interval>')
+@app.route('/get/<label>/start/<start>')
+@app.route('/get/<label>/start/<start>/end/<end>')
+@app.route('/get/<label>/end/<end>')
+@app.route('/get/<label>/count/<int:count>')
+def get(label, interval=None, start=None, end=None, count=None):
+    data = {'label': label}
+    conn = pymysql.connect(
+        host=config['host'],
+        user=config['user'],
+        password=config['passwd'],
+        db='idb', charset='utf8')
+    cur = conn.cursor()
+    sql = 'SELECT data.value, data.updated FROM data WHERE data.label="{}" '.format(label)
+    if interval is not None:
+        sql += 'AND NOW(6)-INTERVAL {} SECOND < data.updated'.format(interval)
+    elif start is not None:
+        if end is not None:
+            sql += 'AND {}<data.updated<{}'.format(start, end)
+        else:
+            sql += 'AND {}<data.updated'.format(start)
+    elif end is not None:
+        sql += 'AND data.updated<{}'.format(end)
+    elif count is not None:
+        sql += 'ORDER BY data.updated DESC LIMIT {}'.format(count)
+    cur.execute(sql)
+    rows = cur.fetchall()
+    data['data'] = []
+    for r in rows:
+        data['data'].append({'val': r[0], 'updated': str(r[1])})
+    cur.close()
+    conn.close()
+    return json.dumps(data)
 
 @app.route('/static/<path:path>')
 def loadStatic(path):
