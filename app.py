@@ -36,16 +36,29 @@ def get(label, interval=None, start=None, end=None, count=None):
     cur = conn.cursor()
     sql = 'SELECT data.value, data.updated FROM data WHERE data.label="{}" '.format(label)
     if interval is not None:
-        sql += 'AND NOW(6)-INTERVAL {} SECOND < data.updated'.format(interval)
+        sql = 'SELECT data.value, data.updated FROM data \
+            WHERE data.label="{}" \
+            AND NOW(6)-INTERVAL {} SECOND < data.updated \
+            ORDER BY data.updated ASC'.format(label, interval)
     elif start is not None:
         if end is not None:
-            sql += 'AND {}<data.updated<{}'.format(start, end)
+            sql = 'SELECT data.value, data.updated FROM data WHERE data.label="{}" \
+                AND {}<data.updated<{} \
+                ORDER BY data.updated ASC'.format(label, start, end)
         else:
-            sql += 'AND {}<data.updated'.format(start)
+            sql = 'SELECT data.value, data.updated FROM data WHERE data.label="{}" \
+                AND {}<data.updated \
+                ORDER BY data.updated ASC'.format(label, start)
     elif end is not None:
-        sql += 'AND data.updated<{}'.format(end)
+        sql = 'SELECT data.value, data.updated FROM data WHERE data.label="{}" \
+            AND data.updated<{} \
+            ORDER BY data.updated ASC'.format(label, end)
     elif count is not None:
-        sql += 'ORDER BY data.updated DESC LIMIT {}'.format(count)
+        sql = 'SELECT * FROM ( \
+            SELECT data.value, data.updated FROM data WHERE data.label="{}" \
+            ORDER BY data.updated DESC LIMIT {} \
+        ) AS alias \
+        ORDER BY alias.updated ASC'.format(label, count)
     cur.execute(sql)
     rows = cur.fetchall()
     data['data'] = []
