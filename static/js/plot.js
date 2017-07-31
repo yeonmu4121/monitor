@@ -2,6 +2,7 @@ class Graph {
     constructor(name) {
         this.name = name;
         this.labels = {};
+        this.svg = d3.select('#plot');
     }
 }
 
