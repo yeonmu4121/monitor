@@ -2,7 +2,10 @@ from flask import Flask, url_for, render_template, redirect
 import json
 import pymysql
 
+import paho.mqtt.client as mqtt
+
 app = Flask(__name__)
+app.config['CACHE_TYPE'] = 'null'
 with open('config.json') as fp:
     config = json.loads(fp.read())
 
@@ -67,6 +70,14 @@ def get(label, interval=None, start=None, end=None, count=None):
     cur.close()
     conn.close()
     return json.dumps(data)
+
+@app.route('/publish/<plot>/<topic>/<value>')
+def mqttPublish(plot, topic, value):
+    client = mqtt.Client('publish')
+    client.connect('localhost', 4000)
+    client.publish('{}/{}'.format(plot, topic), value)
+    client.loop(2)
+    return ''
 
 @app.route('/static/<path:path>')
 def loadStatic(path):
