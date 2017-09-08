@@ -1,5 +1,18 @@
-.row {
-    display: flex;
+body {
+    max-width: 1200px;
+    margin: auto;
+}
+
+@media (max-width: 980px) {
+    .row {
+        display: block;
+    }
+}
+
+@media (min-width: 980px) {
+    .row {
+        display: flex;
+    }
 }
 
 iframe {
