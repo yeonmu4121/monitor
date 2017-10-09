@@ -6,7 +6,7 @@
     <div style="flex:{{col.flex}}">
         <h2>{{col.name}}</h2>
         {%if 'href' in col%}
-        <iframe src="{{col.href}}" frameborder="0" onload="autoResize(this);"></iframe>
+        <iframe id="{{col.id}}" src="{{col.href}}" frameborder="0" onload="autoResize('{{col.id}}');"></iframe>
         {%else%}
         {{genTable(col.table)}}
         {%endif%}
